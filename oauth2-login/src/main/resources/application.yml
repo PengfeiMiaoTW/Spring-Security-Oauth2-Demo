@@ -1,0 +1,28 @@
+server:
+  port: 8082
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+#          github:
+#            client-id: 269e16fd4d4a75841b76
+#            client-secret: 851d30b6afbe2cbb1e78a6f117dba9f752b03aa6
+          trello-auth:
+            client-id: trello-auth
+            client-secret: trello-auth
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_basic
+            scope: openid,message.read,message.write
+            redirect-uri: http://oauth2login:8082/login/oauth2/code/trello-auth
+            provider: trello-auth
+            client-name: Trello Auth
+        provider:
+          trello-auth:
+#            authorization-uri: http://oauth2server:8081/oauth2/authorize
+#            token-uri: http://oauth2server:8081/oauth2/token
+#            jwk-set-uri: http://oauth2server:8081/oauth2/jwks
+#            user-info-uri: http://oauth2server:8081/userinfo
+#            user-name-attribute: sub
+            # 单独配置如下一个也是可以的，底层会自动寻址，如果自定义过url，需要使用上面方式配置(修改oauth2server里上面那些url后，使用如下配置能否有效未测试)
+            issuer-uri: http://oauth2server:8081
