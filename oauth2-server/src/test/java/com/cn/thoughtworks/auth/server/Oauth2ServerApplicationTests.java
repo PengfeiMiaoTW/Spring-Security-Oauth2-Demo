@@ -30,12 +30,15 @@ class Oauth2ServerApplicationTests {
      */
     @Test
     void testSaveUser() {
-        UserDetails userDetails = User.builder().passwordEncoder(s -> "{bcrypt}" + new BCryptPasswordEncoder().encode(s))
-                .username("user")
-                .password("password")
-                .roles("ADMIN")
-                .build();
-        userDetailsManager.createUser(userDetails);
+        if (!userDetailsManager.userExists("user")) {
+            UserDetails userDetails =
+                    User.builder().passwordEncoder(s -> "{bcrypt}" + new BCryptPasswordEncoder().encode(s))
+                            .username("user")
+                            .password("password")
+                            .roles("ADMIN")
+                            .build();
+            userDetailsManager.createUser(userDetails);
+        }
     }
 
     /**
@@ -46,20 +49,22 @@ class Oauth2ServerApplicationTests {
 
     @Test
     void testSaveClient() {
-        RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("trello-auth")
-                .clientSecret("{bcrypt}" + new BCryptPasswordEncoder().encode("trello-auth"))
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                .redirectUri("http://oauth2login:8082/login/oauth2/code/trello-auth")
-                .scope(OidcScopes.OPENID)
-                .scope("message.read")
-                .scope("message.write")
-                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
-                .build();
-        registeredClientRepository.save(registeredClient);
+        if (registeredClientRepository.findByClientId("trello-auth") == null) {
+            RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
+                    .clientId("trello-auth")
+                    .clientSecret("{bcrypt}" + new BCryptPasswordEncoder().encode("trello-auth"))
+                    .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                    .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                    .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                    .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                    .redirectUri("http://oauth2login:8082/login/oauth2/code/trello-auth")
+                    .scope(OidcScopes.OPENID)
+                    .scope("message.read")
+                    .scope("message.write")
+                    .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+                    .build();
+            registeredClientRepository.save(registeredClient);
+        }
     }
 
 }

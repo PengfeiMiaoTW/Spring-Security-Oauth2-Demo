@@ -4,7 +4,10 @@ spring:
   main:
     allow-bean-definition-overriding: true
   datasource:
-    url: jdbc:mysql://localhost:3306/auth-server?createDatabaseIfNotExist=true
+    url: jdbc:mysql://localhost:3603/auth-service?createDatabaseIfNotExist=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: password
+  sql:
+    init:
+      schema-locations: classpath:db/schema.sql
